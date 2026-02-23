@@ -1,0 +1,14 @@
+{
+  "name": "guest-qrcode",
+  "version": "1.0.0",
+  "description": "Generate a unique QR code for every visitor and validate it at the entrance",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "express": "^5.2.1",
+    "qrcode": "^1.5.4"
+  }
+}

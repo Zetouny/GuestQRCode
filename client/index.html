@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>QR Visitor App</title>
+  </head>
+  <body>
+    <img id="logo" src="logo-white.png" />
+    <h1>Visitor QR Code</h1>
+    <p>
+      A unique QR code has been generated just for you. Scan it at the entrance
+      to grant access.
+    </p>
+
+    <div id="qr-box">
+      <img id="qr-img" src="" alt="QR Code" />
+      <span>Your Visitor Code</span>
+      <div id="visitor-code" class="visitor-code">------</div>
+    </div>
+
+    <script>
+      async function loadQR() {
+        let storedId = localStorage.getItem("visitorId");
+        const isValid = /^[A-Z0-9]{6}$/.test((storedId || "").toUpperCase());
+
+        if (!isValid) {
+          localStorage.removeItem("visitorId");
+          storedId = null;
+        }
+
+        const url = storedId ? "/api/qr?vid=" + storedId : "/api/qr";
+        const res = await fetch(url);
+        const data = await res.json();
+
+        localStorage.setItem("visitorId", data.visitorId);
+        document.getElementById("qr-img").src = data.qr;
+        document.getElementById("visitor-code").textContent = data.visitorId;
+      }
+
+      loadQR();
+    </script>
+  </body>
+</html>

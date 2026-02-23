@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Admin Visitor Scanner</title>
+  </head>
+  <body>
+    <img id="logo" src="logo-white.png" />
+    <h1>Admin QR Scanner</h1>
+    <p>Scan a visitor QR code to register that the guest has visited.</p>
+
+    <div class="card">
+      <div id="reader"></div>
+      <div id="status" class="status-panel status-waiting">
+        <strong id="status-title">Ready to scan</strong>
+        <span id="status-message">Point the camera at a visitor QR code.</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="label">Manual check by visitor code</span>
+      <div class="manual-row">
+        <input
+          id="manual-code"
+          type="text"
+          maxlength="6"
+          placeholder="Enter 6-character code"
+        />
+        <button id="manual-btn">Check Code</button>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode" defer></script>
+    <script>
+      const statusEl = document.getElementById("status");
+      const titleEl = document.getElementById("status-title");
+      const messageEl = document.getElementById("status-message");
+      const codeInput = document.getElementById("manual-code");
+      const checkBtn = document.getElementById("manual-btn");
+
+      let busy = false;
+      let lastCode = "";
+      let lastTime = 0;
+
+      function setStatus(cls, title, message) {
+        statusEl.className = "status-panel " + cls;
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+      }
+
+      async function registerVisit(code) {
+        if (busy) return;
+        if (code === lastCode && Date.now() - lastTime < 2500) return;
+
+        busy = true;
+        setStatus("status-waiting", "Processing...", "Registering visit now.");
+
+        try {
+          const res = await fetch("/api/visitors/register-visit", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ scanText: code }),
+          });
+          const data = await res.json();
+
+          if (!res.ok) {
+            if (res.status === 403) {
+              setStatus(
+                "status-limit",
+                "Visit limit reached",
+                data.visitedCount +
+                  "/" +
+                  data.maxVisits +
+                  " already registered.",
+              );
+            } else {
+              setStatus(
+                "status-error",
+                "Scan rejected",
+                data.error || "Failed to register",
+              );
+            }
+            return;
+          }
+
+          lastCode = code;
+          lastTime = Date.now();
+
+          if (data.alreadyVisited) {
+            setStatus(
+              "status-ok",
+              "Already registered",
+              "Visitor was marked visited at " + data.visitedAt,
+            );
+          } else {
+            setStatus(
+              "status-ok",
+              "Registration successful",
+              "Registered at " +
+                data.visitedAt +
+                " (" +
+                data.visitedCount +
+                "/" +
+                data.maxVisits +
+                ")",
+            );
+          }
+        } catch {
+          setStatus(
+            "status-error",
+            "Connection error",
+            "Unable to reach server",
+          );
+        } finally {
+          busy = false;
+        }
+      }
+
+      function submitManual() {
+        const code = codeInput.value.trim().toUpperCase();
+        if (!code)
+          return setStatus(
+            "status-error",
+            "Code required",
+            "Enter a visitor code first.",
+          );
+        if (!/^[A-Z0-9]{6}$/.test(code))
+          return setStatus(
+            "status-error",
+            "Invalid code",
+            "Use exactly 6 letters/numbers.",
+          );
+        codeInput.value = code;
+        registerVisit(code);
+      }
+
+      checkBtn.addEventListener("click", submitManual);
+      codeInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") submitManual();
+      });
+
+      window.addEventListener("load", function () {
+        if (!window.Html5QrcodeScanner) {
+          setStatus(
+            "status-error",
+            "Scanner unavailable",
+            "Scanner library failed to load.",
+          );
+          return;
+        }
+
+        var config = { fps: 10, qrbox: 220 };
+        if (window.Html5QrcodeScanType) {
+          config.supportedScanTypes = [Html5QrcodeScanType.SCAN_TYPE_CAMERA];
+        }
+
+        var scanner = new Html5QrcodeScanner("reader", config, false);
+        scanner.render(
+          function (text) {
+            registerVisit(text);
+          },
+          function () {},
+        );
+      });
+    </script>
+  </body>
+</html>

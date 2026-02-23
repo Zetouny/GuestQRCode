@@ -1,0 +1,129 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100dvh;
+  background: url(pattern-maroon.png) #753e3b no-repeat center / cover;
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+h1 {
+  font-size: 1.8rem;
+  color: #f0f4f8;
+}
+
+#logo {
+  max-width: 100px;
+}
+
+p {
+  color: #f1f1f1;
+  text-align: center;
+  max-width: 400px;
+}
+
+#qr-box,
+.card {
+  background: white;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  max-width: 420px;
+  width: 100%;
+}
+
+#qr-img {
+  max-width: 100%;
+  border-radius: 8px;
+}
+
+.label {
+  font-weight: 600;
+}
+
+.visitor-code {
+  background: #ffcfcc;
+  color: #753e3b;
+  border: 1px solid #bb7774;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.08em;
+}
+
+.status-panel {
+  width: 100%;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  border: 2px solid transparent;
+}
+
+.status-panel strong {
+  display: block;
+  font-size: 1.1rem;
+  margin-bottom: 0.35rem;
+}
+
+.status-waiting {
+  background: #ffcfcc;
+  color: #753e3b;
+  border-color: #bb7774;
+}
+
+.status-ok {
+  background: #f0fff4;
+  color: #276749;
+  border-color: #9ae6b4;
+}
+
+.status-limit {
+  background: #fffaf0;
+  color: #9c4221;
+  border-color: #fbd38d;
+}
+
+.status-error {
+  background: #fff5f5;
+  color: #c53030;
+  border-color: #feb2b2;
+}
+
+.manual-row {
+  width: 100%;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.manual-row input {
+  flex: 1;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #cbd5e0;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.manual-row button {
+  padding: 0.65rem 0.85rem;
+  border: none;
+  border-radius: 8px;
+  background: #753e3b;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
