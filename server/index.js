@@ -54,7 +54,7 @@ app.get("/api/visitors", (req, res) => {
 });
 
 app.get("/validate", (req, res) => {
-  res.sendFile("admin.html", { root: "client" });
+  res.sendFile("validate.html", { root: "client" });
 });
 
 app.post("/api/visitors/register-visit", (req, res) => {
