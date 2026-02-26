@@ -4,7 +4,7 @@ const db = require("./db");
 
 const app = express();
 const PORT = 3000;
-const MAX_VISITS = 55;
+const MAX_VISITS = 25;
 const CODE_LENGTH = 6;
 const CODE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const CODE_REGEX = /^[A-Z0-9]{6}$/;
